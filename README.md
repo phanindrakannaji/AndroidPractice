@@ -1,2 +1,0 @@
-# AndroidPractice
-Practicing Android Applications
