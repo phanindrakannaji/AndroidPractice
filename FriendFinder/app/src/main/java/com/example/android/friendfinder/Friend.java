@@ -6,26 +6,26 @@ package com.example.android.friendfinder;
 
 class Friend {
 
-    private String username;
+    private String email;
     private String fullName;
     private Double latitude;
     private Double longitude;
     private String timestamp;
 
-    Friend(String username, String fullName, Double latitude, Double longitude, String timestamp) {
-        this.username = username;
+    Friend(String email, String fullName, Double latitude, Double longitude, String timestamp) {
+        this.email = email;
         this.fullName = fullName;
         this.latitude = latitude;
         this.longitude = longitude;
         this.timestamp = timestamp;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getFullName() {

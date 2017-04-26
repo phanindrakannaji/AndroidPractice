@@ -15,7 +15,7 @@ if (!$mysqli->query("DROP TABLE IF EXISTS " . $table)) {
 }
 
 if (!$mysqli->query("CREATE TABLE " . $table . "(
-	username VARCHAR(20) PRIMARY KEY,
+	email VARCHAR(20) PRIMARY KEY,
 	fullName VARCHAR(20),
 	password VARCHAR(20),
 	latestTimestamp DATETIME,

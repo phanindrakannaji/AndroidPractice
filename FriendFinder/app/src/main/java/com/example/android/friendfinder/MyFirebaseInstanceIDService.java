@@ -39,10 +39,10 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
     public void sendRegistrationToServer(String refreshedToken, Context ctx) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String username = sharedPrefs.getString("username", "unknown");
+        String email = sharedPrefs.getString("email", "unknown");
         String[] input = new String[2];
         input[0] = refreshedToken;
-        input[1] = username;
+        input[1] = email;
         UploadTask task = new UploadTask();
         task.execute(input);
     }
@@ -69,7 +69,7 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
                 String requestJsonString = new JSONObject()
                         .put("token", strings[0])
-                        .put("username", strings[1])
+                        .put("email", strings[1])
                         .toString();
 
                 Log.d("TOKEN REQUEST BODY : ", requestJsonString);
@@ -96,3 +96,4 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         }
     }
 }
+

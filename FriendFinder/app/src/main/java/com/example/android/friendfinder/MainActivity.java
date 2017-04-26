@@ -6,12 +6,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,22 +37,30 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    EditText reg_username, reg_fullName, reg_password, login_username, login_password;
+    private static final String TAG = "MainActivity";
+    EditText reg_email, reg_fullName, reg_password, login_email, login_password;
     Button register, login;
     Handler handler = new Handler();
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        reg_username = (EditText) findViewById(R.id.et_username);
+        reg_email = (EditText) findViewById(R.id.et_email);
         reg_password = (EditText) findViewById(R.id.et_password);
         reg_fullName = (EditText) findViewById(R.id.et_fullname);
-        login_username = (EditText) findViewById(R.id.et_login_username);
+        login_email = (EditText) findViewById(R.id.et_login_email);
         login_password = (EditText) findViewById(R.id.et_login_password);
         register = (Button) findViewById(R.id.bt_register);
         login = (Button) findViewById(R.id.bt_login);
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        updateUI(currentUser);
+    }
+
+    private void updateUI(FirebaseUser currentUser) {
     }
 
     @Override
@@ -66,30 +81,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.bt_login:
-                String username = String.valueOf(login_username.getText());
-                String password = String.valueOf(login_password.getText());
-                if (username.equalsIgnoreCase("")){
-                    login_username.setError("Username cannot be blank!");
+                final String loginEmail = String.valueOf(login_email.getText());
+                final String loginPassword = String.valueOf(login_password.getText());
+                if (loginEmail.equalsIgnoreCase("")){
+                    login_email.setError("Email cannot be blank!");
                 }
-                if (password.equalsIgnoreCase("")){
+                if (loginPassword.equalsIgnoreCase("")){
                     login_password.setError("Password cannot be blank!");
                 }
-                if (!username.equalsIgnoreCase("") && !password.equalsIgnoreCase("")){
-                    String[] input = new String[3];
-                    input[0] = "login";
-                    input[1] = username;
-                    input[2] = password;
-                    UserTask createUserTask = new UserTask();
-                    createUserTask.execute(input);
+                if (!loginEmail.equalsIgnoreCase("") && !loginPassword.equalsIgnoreCase("")){
+                    mAuth.signInWithEmailAndPassword(loginEmail, loginPassword)
+                            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "signInWithEmail:success");
+                                        FirebaseUser user = mAuth.getCurrentUser();
+                                        String[] input = new String[3];
+                                        input[0] = "login";
+                                        input[1] = loginEmail;
+                                        input[2] = loginPassword;
+                                        UserTask createUserTask = new UserTask();
+                                        createUserTask.execute(input);
+                                        updateUI(user);
+                                    } else {
+                                        Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                        Toast.makeText(MainActivity.this, "Authentication failed.",
+                                                Toast.LENGTH_SHORT).show();
+                                        updateUI(null);
+                                    }
+                                }
+                            });
                 }
                 break;
 
             case R.id.bt_register:
-                username = String.valueOf(reg_username.getText());
-                password = String.valueOf(reg_password.getText());
-                String fullName = String.valueOf(reg_fullName.getText());
-                if (username.equalsIgnoreCase("")){
-                    reg_username.setError("Username cannot be blank!");
+                final String email = String.valueOf(reg_email.getText());
+                final String password = String.valueOf(reg_password.getText());
+                final String fullName = String.valueOf(reg_fullName.getText());
+                if (email.equalsIgnoreCase("")){
+                    reg_email.setError("Email cannot be blank!");
                 }
                 if (password.equalsIgnoreCase("")){
                     reg_password.setError("Password cannot be blank!");
@@ -97,14 +128,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (fullName.equalsIgnoreCase("")){
                     reg_fullName.setError("Name cannot be blank!");
                 }
-                if (!username.equalsIgnoreCase("") && !password.equalsIgnoreCase("") && !fullName.equalsIgnoreCase("")){
-                    String[] input = new String[4];
-                    input[0] = "register";
-                    input[1] = username;
-                    input[2] = fullName;
-                    input[3] = password;
-                    UserTask createUserTask = new UserTask();
-                    createUserTask.execute(input);
+                if (!email.equalsIgnoreCase("") && !password.equalsIgnoreCase("") && !fullName.equalsIgnoreCase("")){
+                mAuth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "createUserWithEmail:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    String[] input = new String[4];
+                                    input[0] = "register";
+                                    input[1] = email;
+                                    input[2] = fullName;
+                                    input[3] = password;
+                                    UserTask createUserTask = new UserTask();
+                                    createUserTask.execute(input);
+                                    updateUI(user);
+                                } else {
+                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                    Toast.makeText(MainActivity.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+                                    updateUI(null);
+                                }
+                            }
+                        });
                 }
                 break;
         }
@@ -153,12 +200,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String requestJsonString = "";
                 if (strings[0].equalsIgnoreCase("login")){
                     requestJsonString = new JSONObject()
-                            .put("username", strings[1])
+                            .put("email", strings[1])
                             .put("password", strings[2])
                             .toString();
                 } else if (strings[0].equalsIgnoreCase("register")){
                     requestJsonString = new JSONObject()
-                            .put("username", strings[1])
+                            .put("email", strings[1])
                             .put("fullName", strings[2])
                             .put("password", strings[3])
                             .toString();
@@ -187,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject childJsonObj = jsonArray.getJSONObject(i);
                         if (childJsonObj.getString("status").equalsIgnoreCase("S")) {
-                            Friend friend = new Friend(childJsonObj.getString("username"),
+                            Friend friend = new Friend(childJsonObj.getString("email"),
                                     childJsonObj.getString("fullName"),
                                     childJsonObj.getDouble("latitude"),
                                     childJsonObj.getDouble("longitude"),
@@ -214,11 +261,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 for(Friend friend : friends){
                     SharedPreferences userDetails = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     SharedPreferences.Editor editor = userDetails.edit();
-                    editor.putString("username", String.valueOf(friend.getUsername()));
+                    editor.putString("email", String.valueOf(friend.getEmail()));
                     editor.putString("fullName", String.valueOf(friend.getFullName()));
                     editor.apply();
                     Intent myIntent = new Intent(MainActivity.this, MapsActivity.class);
-                    myIntent.putExtra("userName", String.valueOf(friend.getUsername()));
+                    myIntent.putExtra("email", String.valueOf(friend.getEmail()));
                     myIntent.putExtra("fullName", String.valueOf(friend.getFullName()));
                     startActivity(myIntent);
                 }

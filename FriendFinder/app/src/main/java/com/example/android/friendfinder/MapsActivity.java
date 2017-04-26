@@ -1,6 +1,5 @@
 package com.example.android.friendfinder;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -41,26 +40,32 @@ import java.util.List;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
     private GoogleMap mMap;
-    private String username, fullName;
+    private String email, fullName;
     private LatLng currentLocation;
     private Handler mHandler;
     private String token;
     private boolean isFocused = false;
+    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         Intent myIntent = getIntent();
-        username = myIntent.getStringExtra("userName");
+        email = myIntent.getStringExtra("email");
         fullName = myIntent.getStringExtra("fullName");
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
 
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MapsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MapsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
@@ -68,13 +73,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MyFirebaseInstanceIDService fcmTokenService = new MyFirebaseInstanceIDService();
         token = FirebaseInstanceId.getInstance().getToken();
         fcmTokenService.sendRegistrationToServer(token, getApplicationContext());
+        startRepeatingTask();
     }
 
-
     @Override
-    protected void onResume() {
-        super.onResume();
-        startRepeatingTask();
+    protected void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(this);
+        stopRepeatingTask();
     }
 
     /**
@@ -100,6 +106,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onDestroy() {
         super.onDestroy();
         stopRepeatingTask();
+        email = "";
+        fullName = "";
     }
 
     Runnable mStatusChecker = new Runnable() {
@@ -108,7 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             try {
                 if (currentLocation != null) {
                     String[] input = new String[3];
-                    input[0] = username;
+                    input[0] = email;
                     input[1] = String.valueOf(currentLocation.latitude);
                     input[2] = String.valueOf(currentLocation.longitude);
                     GetFriendsTask getFriendsTask = new GetFriendsTask();
@@ -137,7 +145,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
         String[] input = new String[3];
-        input[0] = username;
+        input[0] = email;
         input[1] = latitude;
         input[2] = longitude;
 
@@ -181,7 +189,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
 
                 String requestJsonString = new JSONObject()
-                        .put("username", strings[0])
+                        .put("email", strings[0])
                         .put("latitude", strings[1])
                         .put("longitude", strings[2])
                         .toString();
@@ -233,7 +241,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
 
                 String requestJsonString = new JSONObject()
-                        .put("username", strings[0])
+                        .put("email", strings[0])
                         .put("latitude", strings[1])
                         .put("longitude", strings[2])
                         .toString();
@@ -259,7 +267,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(jsonArray.length() > 0){
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject childJsonObj = jsonArray.getJSONObject(i);
-                        Friend friend = new Friend(childJsonObj.getString("username"),
+                        Friend friend = new Friend(childJsonObj.getString("email"),
                                 childJsonObj.getString("fullName"),
                                 childJsonObj.getDouble("latitude"),
                                 childJsonObj.getDouble("longitude"),

@@ -4,7 +4,7 @@
 include "dbinfo.inc";
 
 $data = json_decode(file_get_contents('php://input'), true);
-$username = $data["username"];
+$email = $data["email"];
 
 $table = "friends";
 
@@ -15,10 +15,10 @@ if ($mysqli->connect_errno) {
     die("[ERROR] Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
 }
 
-$res = $mysqli->query("SELECT username, firstName, lastName, latestTimestamp, latitude, longitude  FROM " .$table. " WHERE username <> '$username' ORDER BY username ASC");
+$res = $mysqli->query("SELECT email, firstName, lastName, latestTimestamp, latitude, longitude  FROM " .$table. " WHERE email <> '$email' ORDER BY email ASC");
 $jsonMainArr = array();
 while ($row = $res->fetch_assoc()) {
-    $jsonArr["username"] = $row['username'];
+    $jsonArr["email"] = $row['email'];
     $jsonArr["firstName"] = $row['firstName'];
     $jsonArr["lastName"] = $row['lastName'];
     $jsonArr["latestTimestamp"] = $row['latestTimestamp'];

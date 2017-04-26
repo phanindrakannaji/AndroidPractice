@@ -7,7 +7,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 $latitude = floatval($data["latitude"]);
 $longitude = floatval($data["longitude"]);
-$username = $data["username"];
+$email = $data["email"];
 
 $table = "friends";
 
@@ -19,7 +19,7 @@ if ($mysqli->connect_errno) {
 }
 $token = $mysqli->real_escape_string($token);
 
-$query = "UPDATE $table SET latestTimestamp = now(), latitude = $latitude, longitude = $longitude WHERE LOWER(username) = LOWER('$username')";
+$query = "UPDATE $table SET latestTimestamp = now(), latitude = $latitude, longitude = $longitude WHERE LOWER(email) = LOWER('$email')";
 	$result = $mysqli->query($query);
 	if(!$result)
 	{
@@ -27,10 +27,10 @@ $query = "UPDATE $table SET latestTimestamp = now(), latitude = $latitude, longi
 		die($error);
 	}
 
-$res = $mysqli->query("SELECT username, fullName, latestTimestamp, latitude, longitude  FROM " .$table. " WHERE LOWER(username) = LOWER('$username') ORDER BY username ASC");
+$res = $mysqli->query("SELECT email, fullName, latestTimestamp, latitude, longitude  FROM " .$table. " WHERE LOWER(email) = LOWER('$email') ORDER BY email ASC");
 $jsonMainArr = array();
 while ($row = $res->fetch_assoc()) {
-    $jsonArr["username"] = $row['username'];
+    $jsonArr["email"] = $row['email'];
     $jsonArr["fullName"] = $row['fullName'];
     $jsonArr["latestTimestamp"] = $row['latestTimestamp'];
     $jsonArr["latitude"] = $row['latitude'];

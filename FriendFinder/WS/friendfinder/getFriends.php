@@ -19,7 +19,7 @@ function getDistanceFromLatLonInKm($lat1,$lon1,$lat2,$lon2) {
 
 try{
 	$data = json_decode(file_get_contents('php://input'), true);
-	$username = $data["username"];
+	$email = $data["email"];
 	$latitude = floatval($data["latitude"]);
 	$longitude = floatval($data["longitude"]);
 
@@ -32,18 +32,18 @@ try{
 	    die("[ERROR] Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
 	}
 
-	$res = $mysqli->query("SELECT username, fullName, latestTimestamp, latitude, longitude  
+	$res = $mysqli->query("SELECT email, fullName, latestTimestamp, latitude, longitude
 		FROM " .$table. " 
-		WHERE username <> '$username' 
+		WHERE email <> '$email'
 		AND latestTimestamp > TIME(DATE_SUB(NOW(), INTERVAL 1 HOUR))
-		ORDER BY username ASC");
+		ORDER BY email ASC");
 	$jsonMainArr = array();
 	while ($row = $res->fetch_assoc()) {
 		$friendLatitude = floatval($row['latitude']);
 		$friendLongitude = floatval($row['longitude']);
 		$distance = getDistanceFromLatLonInKm($latitude, $longitude, $friendLatitude, $friendLongitude);
 		if ($distance <= 10){
-			$jsonArr["username"] = $row['username'];
+			$jsonArr["email"] = $row['email'];
 	    	$jsonArr["fullName"] = $row['fullName'];
 	    	$jsonArr["latestTimestamp"] = $row['latestTimestamp'];
 	    	$jsonArr["latitude"] = $row['latitude'];
