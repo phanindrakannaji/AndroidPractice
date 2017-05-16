@@ -42,7 +42,7 @@ try{
 		$friendLatitude = floatval($row['latitude']);
 		$friendLongitude = floatval($row['longitude']);
 		$distance = getDistanceFromLatLonInKm($latitude, $longitude, $friendLatitude, $friendLongitude);
-		if ($distance <= 10){
+		if ($distance <= 1){
 			$jsonArr["email"] = $row['email'];
 	    	$jsonArr["fullName"] = $row['fullName'];
 	    	$jsonArr["latestTimestamp"] = $row['latestTimestamp'];
@@ -50,7 +50,7 @@ try{
 	    	$jsonArr["longitude"] = $row['longitude'];
 	    	$jsonMainArr[] = $jsonArr;
 		}
-	}	
+	}
 	
 	header('Content-type: application/json');
 	echo json_encode($jsonMainArr);

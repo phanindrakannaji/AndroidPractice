@@ -6,84 +6,92 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.android.friendfinder.MainActivity">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:textSize="20sp"
+                android:text="If you already have an account:"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="5dp"
-        android:textSize="20sp"
-        android:text="If you already have an account:"/>
+            <EditText
+                android:id="@+id/et_login_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin"
+                android:hint="@string/email"
+                android:layout_gravity="center"
+                android:inputType="textPersonName" />
 
-    <EditText
-        android:id="@+id/et_login_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin"
-        android:hint="@string/email"
-        android:layout_gravity="center"
-        android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/et_login_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/password"
+                android:layout_margin="@dimen/margin"
+                android:layout_gravity="center"
+                android:inputType="textPassword" />
 
-    <EditText
-        android:id="@+id/et_login_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/password"
-        android:layout_margin="@dimen/margin"
-        android:layout_gravity="center"
-        android:inputType="textPassword" />
+            <Button
+                android:id="@+id/bt_login"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:layout_gravity="center"
+                android:textSize="18sp" />
 
-    <Button
-        android:id="@+id/bt_login"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:layout_gravity="center"
-        android:textSize="18sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:textSize="20sp"
+                android:text="If not, create one:"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="5dp"
-        android:textSize="20sp"
-        android:text="If not, create one:"/>
+            <EditText
+                android:id="@+id/et_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin"
+                android:layout_gravity="center"
+                android:hint="@string/email"
+                android:inputType="textPersonName" />
 
-    <EditText
-        android:id="@+id/et_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin"
-        android:layout_gravity="center"
-        android:hint="@string/email"
-        android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/et_fullname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin"
+                android:hint="@string/full_name"
+                android:layout_gravity="center"
+                android:inputType="textPersonName" />
 
-    <EditText
-        android:id="@+id/et_fullname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin"
-        android:hint="@string/full_name"
-        android:layout_gravity="center"
-        android:inputType="textPersonName" />
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin"
+                android:hint="@string/password"
+                android:layout_gravity="center"
+                android:inputType="textPassword" />
 
-    <EditText
-        android:id="@+id/et_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin"
-        android:hint="@string/password"
-        android:layout_gravity="center"
-        android:inputType="textPassword" />
-
-    <Button
-        android:id="@+id/bt_register"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Register"
-        android:textSize="18sp" />
+            <Button
+                android:id="@+id/bt_register"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Register"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

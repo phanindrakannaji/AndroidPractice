@@ -42,8 +42,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private String email, fullName;
     private LatLng currentLocation;
-    private Handler mHandler;
-    private String token;
+    Handler mHandler;
     private boolean isFocused = false;
     private LocationManager locationManager;
 
@@ -51,6 +50,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        mHandler = new Handler();
         Intent myIntent = getIntent();
         email = myIntent.getStringExtra("email");
         fullName = myIntent.getStringExtra("fullName");
@@ -69,9 +70,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-        mHandler = new Handler();
         MyFirebaseInstanceIDService fcmTokenService = new MyFirebaseInstanceIDService();
-        token = FirebaseInstanceId.getInstance().getToken();
+        String token = FirebaseInstanceId.getInstance().getToken();
         fcmTokenService.sendRegistrationToServer(token, getApplicationContext());
         startRepeatingTask();
     }
@@ -292,8 +292,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("Locating: ", friend.getFullName());
                 currentLoc = new LatLng(friend.getLatitude(), friend.getLongitude());
                 if (mMap != null) {
-                    mMap.clear();
-                    mMap.addMarker(new MarkerOptions().position(currentLoc).title(friend.getFullName())).showInfoWindow();
+                    mMap.addMarker(new MarkerOptions()
+                            .position(currentLoc)
+                            .title(friend.getFullName())
+                            .zIndex(2.0f));
                 }
             }
             currentLoc = currentLocation;
@@ -301,7 +303,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.addMarker(new MarkerOptions()
                         .position(currentLoc)
                         .title("You")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))).showInfoWindow();
+                        .zIndex(1.0f)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
                 if(!isFocused) {
                     CameraPosition cp = new CameraPosition.Builder().target(currentLoc)
                             .zoom(15).build();

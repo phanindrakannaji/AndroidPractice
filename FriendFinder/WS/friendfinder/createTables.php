@@ -19,6 +19,7 @@ if (!$mysqli->query("CREATE TABLE " . $table . "(
 	fullName VARCHAR(20),
 	password VARCHAR(20),
 	latestTimestamp DATETIME,
+	lastAlertedTime DATETIME,
 	latitude DECIMAL(16, 10),
 	longitude DECIMAL(16,10),
 	token varchar(1024)

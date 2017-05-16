@@ -28,7 +28,7 @@ $errorOccurred = false;
 $res = $mysqli->query("SELECT email FROM ".$table." WHERE LOWER(email) = LOWER('". $email ."')");
 if (!$res || $res->num_rows == 0 ){
 	# Insert entry for user if user doesn't exist
-	$query = "INSERT INTO $table(email, fullName, password, latestTimestamp, latitude, longitude, token) VALUES(LOWER('$email'), '$fullName', '$password', now(), $latitude, $longitude, '')";
+	$query = "INSERT INTO $table(email, fullName, password, latestTimestamp, lastAlertedTime, latitude, longitude, token) VALUES(LOWER('$email'), '$fullName', '$password', now(), now(), $latitude, $longitude, '')";
 	$result = $mysqli->query($query);
 	if(!$result)
 	{
